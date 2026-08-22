@@ -16,6 +16,8 @@ services:
         sync: false
       - key: OWNER_ID
         sync: false
+      - key: LOGGER_ID
+        sync: false
       # Optional environment variables
       - key: START_IMG_URL
         value: "https://files.catbox.moe/he87u5.jpg"
