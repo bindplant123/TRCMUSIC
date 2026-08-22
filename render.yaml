@@ -1,6 +1,6 @@
 services:
-  - type: worker
-    name: trcmusic-worker
+  - type: web
+    name: trcmusic-web
     env: docker
     plan: free # Change this if you need a paid tier
     envVars:
