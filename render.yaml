@@ -21,6 +21,8 @@ services:
       # Optional environment variables
       - key: START_IMG_URL
         value: "https://files.catbox.moe/he87u5.jpg"
+      - key: ARC_API_KEY
+        sync: false
       - key: DURATION_LIMIT
         value: "3600"
       - key: QUEUE_LIMIT

@@ -35,11 +35,7 @@ RUN apt-get update && \
 
 COPY --from=builder /etc/ssl/certs /etc/ssl/certs
 
-RUN curl -fL \
-      https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux \
-      -o /usr/local/bin/yt-dlp && \
-    chmod 0755 /usr/local/bin/yt-dlp && \
-    curl -fsSL https://deno.land/install.sh -o /tmp/deno-install.sh && \
+RUN curl -fsSL https://deno.land/install.sh -o /tmp/deno-install.sh && \
     sh /tmp/deno-install.sh && \
     rm -f /tmp/deno-install.sh
 
