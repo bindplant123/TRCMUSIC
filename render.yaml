@@ -1,0 +1,29 @@
+services:
+  - type: worker
+    name: trcmusic-worker
+    env: docker
+    plan: free # Change this if you need a paid tier
+    envVars:
+      - key: API_ID
+        sync: false
+      - key: API_HASH
+        sync: false
+      - key: TOKEN
+        sync: false
+      - key: MONGO_DB_URI
+        sync: false
+      - key: STRING_SESSION
+        sync: false
+      - key: OWNER_ID
+        sync: false
+      # Optional environment variables
+      - key: START_IMG_URL
+        value: "https://files.catbox.moe/he87u5.jpg"
+      - key: DURATION_LIMIT
+        value: "3600"
+      - key: QUEUE_LIMIT
+        value: "10"
+      - key: LEAVE_ON_DEMOTED
+        value: "false"
+      - key: MAX_AUTH_USERS
+        value: "25"
