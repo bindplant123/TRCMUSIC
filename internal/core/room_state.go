@@ -40,6 +40,7 @@ type RoomState struct {
 	playing   bool
 	paused    bool
 	muted     bool
+	bass      bool
 	speed     float64
 	position  int
 	updatedAt int64
@@ -437,4 +438,16 @@ func (r *RoomState) Parse() {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.updatePosition()
+}
+
+func (r *RoomState) ToggleBass() bool {
+	if r.IsDestroyed() {
+		return false
+	}
+	r.mu.Lock()
+	r.bass = !r.bass
+	r.mu.Unlock()
+
+	r.Seek(r.position)
+	return r.bass
 }

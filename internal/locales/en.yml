@@ -995,3 +995,6 @@ help_public: |
   <b>/json</b> - Show message JSON structure
   <b>/sudolist</b> - View sudo user list
   <b>/privacy<b> - open privacy policy
+
+BASS_ENABLED: "?? **Bass Boost enabled!** (It might take a few seconds to apply)"
+BASS_DISABLED: "?? **Bass Boost disabled!**"
