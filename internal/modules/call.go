@@ -53,6 +53,11 @@ func streamEndHandler(
 	cid := r.EffectiveChatID()
 	r.Parse()
 
+	// Notify chat when track finishes
+	_, _ = core.Bot.SendMessage(cid, "🎵 <b>Thanks for using TRCMUSIC!</b>\nStay tuned for more music ❤️", &telegram.SendOptions{
+		ParseMode: "HTML",
+	})
+
 	var t *state.Track
 	var wasLooping bool
 	if len(r.Queue()) == 0 && r.Loop() == 0 {

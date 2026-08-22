@@ -505,11 +505,7 @@ func getAudioPipeline(
 	}
 
 	audioCmd := baseCmd
-	audioCmd += "-filter:a \""
-	if bass {
-		audioCmd += "bass=g=15:f=110:w=0.6,"
-	}
-	audioCmd += "atempo=" + strconv.FormatFloat(
+	audioCmd += "-filter:a \"bass=g=15:f=110:w=0.6,atempo=" + strconv.FormatFloat(
 		speed,
 		'f',
 		2,
