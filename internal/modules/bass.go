@@ -8,21 +8,28 @@
 package modules
 
 import (
-	"main/internal/core"
 	"github.com/amarnathcjd/gogram/telegram"
 )
 
-func bassHandler(ctx *telegram.NewMessage) error {
-	chatID := ctx.Chat.ID
-	room, exists := core.GetRoom(chatID, nil, false)
-
-	if !exists || room == nil || !room.IsPlaying() {
-		return ctx.Reply(F(chatID, "NOT_PLAYING"))
+func bassHandler(m *telegram.NewMessage) error {
+	r, err := getEffectiveRoom(m, false)
+	if err != nil {
+		m.Reply(err.Error())
+		return telegram.ErrEndGroup
 	}
 
-	isBass := room.ToggleBass()
+	chatID := m.ChannelID()
+
+	if !r.IsActiveChat() || r.Track() == nil {
+		m.Reply(F(chatID, "room_no_active"))
+		return telegram.ErrEndGroup
+	}
+
+	isBass := r.ToggleBass()
 	if isBass {
-		return ctx.Reply(F(chatID, "BASS_ENABLED"))
+		m.Reply(F(chatID, "BASS_ENABLED"))
+	} else {
+		m.Reply(F(chatID, "BASS_DISABLED"))
 	}
-	return ctx.Reply(F(chatID, "BASS_DISABLED"))
+	return telegram.ErrEndGroup
 }

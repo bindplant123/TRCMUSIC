@@ -70,6 +70,12 @@ var handlers = []MsgHandlerDef{
 	},
 
 	{
+		Pattern: "bass",
+		Handler: bassHandler,
+		Filters: []telegram.Filter{adminFilter, ignoreChannelFilter},
+	},
+
+	{
 		Pattern: "(speedtest|spt)",
 		Handler: sptHandle,
 		Filters: []telegram.Filter{sudoOnlyFilter, ignoreChannelFilter},

@@ -446,8 +446,10 @@ func (r *RoomState) ToggleBass() bool {
 	}
 	r.mu.Lock()
 	r.bass = !r.bass
+	pos := r.position
+	bassState := r.bass
 	r.mu.Unlock()
 
-	r.Seek(r.position)
-	return r.bass
+	r.Seek(pos)
+	return bassState
 }
