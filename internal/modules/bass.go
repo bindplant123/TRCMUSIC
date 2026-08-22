@@ -12,24 +12,17 @@ import (
 	"github.com/amarnathcjd/gogram/telegram"
 )
 
-func init() {
-	core.AddCommandHandler("bass", core.Command{
-		Handler: bassHandler,
-		Admin:   true,
-	})
-}
-
 func bassHandler(ctx *telegram.NewMessage) error {
 	chatID := ctx.Chat.ID
-	room := core.GetRoom(chatID)
+	room, exists := core.GetRoom(chatID, nil, false)
 
-	if room == nil || !room.IsPlaying() {
-		return F(ctx, "NOT_PLAYING")
+	if !exists || room == nil || !room.IsPlaying() {
+		return ctx.Reply(F(chatID, "NOT_PLAYING"))
 	}
 
 	isBass := room.ToggleBass()
 	if isBass {
-		return F(ctx, "BASS_ENABLED")
+		return ctx.Reply(F(chatID, "BASS_ENABLED"))
 	}
-	return F(ctx, "BASS_DISABLED")
+	return ctx.Reply(F(chatID, "BASS_DISABLED"))
 }
