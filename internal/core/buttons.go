@@ -54,6 +54,18 @@ func SuppMarkup(chatID int64) tg.ReplyMarkup {
 		Build()
 }
 
+func GetGroupStartMarkup(chatID int64) tg.ReplyMarkup {
+	return tg.NewKeyboard().
+		AddRow(
+			tg.Button.URL(
+				F(chatID, "ADD_ME_BTN"),
+				"https://t.me/"+Bot.Me().Username+"?startgroup&admin=invite_users",
+			),
+			tg.Button.URL(F(chatID, "SUPPORT_BTN"), config.SupportChat),
+		).
+		Build()
+}
+
 func GetStopConfirmMarkup(
 	chatID int64,
 	r *RoomState,

@@ -24,9 +24,18 @@ func init() {
 func startHandler(m *tg.NewMessage) error {
 	if m.ChatType() != tg.EntityUser {
 		database.AddServedChat(m.ChannelID())
-		m.Reply(
-			F(m.ChannelID(), "start_group"),
+		_, err := m.RespondMedia(
+			config.StartImage,
+			&tg.MediaOptions{
+				Caption:     F(m.ChannelID(), "start_group"),
+				NoForwards:  true,
+				ReplyMarkup: core.GetGroupStartMarkup(m.ChannelID()),
+			},
 		)
+		if err != nil {
+			gologging.Error("[start] Group media reply failed: " + err.Error())
+			return err
+		}
 		return tg.ErrEndGroup
 	}
 
