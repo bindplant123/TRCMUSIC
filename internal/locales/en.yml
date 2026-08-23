@@ -10,10 +10,15 @@ CLOSE_BTN: "Close"
 DOWNLOAD_CANCEL_BTN: "🚦 Cancel Downloading"
 GC_HELP_BTN: "📒 Commands"
 
-START_HELP_BTN: "Help & Commands"
+START_HELP_BTN: "📚 Help & Commands"
 SOURCE_BTN: "Source"
 UPDATES_BTN: "Updates"
 SUPPORT_BTN: "Support"
+PLAYER_RESUME_BTN: "▶️"
+PLAYER_PAUSE_BTN: "⏸️"
+PLAYER_SKIP_BTN: "⏭️"
+PLAYER_REPLAY_BTN: "🔁"
+PLAYER_STOP_BTN: "⏹️"
 
 HELP_ADMINS_BTN: "🛠 Admins"
 HELP_PUBLIC_BTN: "🌍 Public"
@@ -287,7 +292,7 @@ flood_seconds: "⏳ Slow down! Try again in {duration} seconds."
 flood_minutes: "⏳ Please wait {duration} minutes before using this command again."
 
 help_private_only: "🤖 Hi! For bot help and commands, please DM me directly — I'm more responsive in private chats!"
-help_main: "📚 <b>Help Menu</b>\n\nSelect a category below to explore detailed commands and their usage for managing, controlling, and customizing the bot."
+help_main: "📚 <b>Music Control Center</b>\n\nChoose a category below to discover playback, queue, admin, and owner controls.\n\n<i>Everything you need to keep the voice chat moving.</i>"
 
 jump_no_active: "⚠️ No active track to jump within."
 jump_usage: "⚠️ Please provide seconds.\nExample: <code>{cmd} 120</code>"
@@ -888,7 +893,18 @@ spt_result: |
   Download: <code>{dl_mbps} Mbps</code>
   Upload: <code>{ul_mbps} Mbps</code>
 
-start_private: "Hello {user}, My name is {bot}.\n\nI'm a telegram streaming bot with some useful features. Supporting platforms like Youtube, Spotify, JioSaavn, Soundcloud etc.\n\nFeel free to add me to your groups."
+start_private: |
+  <b>🎵 Welcome to {bot}</b>
+  <i>Your personal music companion for Telegram voice chats.</i>
+
+  Hello {user}! Search, stream, and control your queue with a few taps.
+
+  <b>⚡ Quick start</b>
+  <code>/play song name</code> to start listening
+  <code>/queue</code> to view what is next
+  <code>/help</code> to explore every control
+
+  <i>Ready when you are. Let the music play.</i>
 
 start_group: "<b>💫 I’m here!</b> Try a command… if you think you can handle me 😉"
 

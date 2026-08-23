@@ -273,7 +273,10 @@ func handleQueue(m *tg.NewMessage, cplay bool) error {
 		b.WriteString(F(chatID, "queue_empty_tail"))
 	}
 
-	m.Reply(b.String())
+	m.Reply(b.String(), &tg.SendOptions{
+		ParseMode:   "HTML",
+		ReplyMarkup: core.GetPlayMarkup(chatID, r, true),
+	})
 	return tg.ErrEndGroup
 }
 

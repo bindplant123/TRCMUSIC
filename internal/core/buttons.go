@@ -107,11 +107,11 @@ func GetPlayMarkup(chatID int64, r *RoomState, queued bool) tg.ReplyMarkup {
 		)
 	}
 	btn.AddRow(
-		tg.Button.Data("▷", prefix+"resume"),
-		tg.Button.Data("II", prefix+"pause"),
-		tg.Button.Data("‣‣I", prefix+"skip"),
-		tg.Button.Data("⟳", "room:replay"),
-		tg.Button.Data("▢", prefix+"stop"),
+		tg.Button.Data(F(chatID, "PLAYER_RESUME_BTN"), prefix+"resume"),
+		tg.Button.Data(F(chatID, "PLAYER_PAUSE_BTN"), prefix+"pause"),
+		tg.Button.Data(F(chatID, "PLAYER_SKIP_BTN"), prefix+"skip"),
+		tg.Button.Data(F(chatID, "PLAYER_REPLAY_BTN"), prefix+"replay"),
+		tg.Button.Data(F(chatID, "PLAYER_STOP_BTN"), prefix+"stop"),
 	)
 
 	btn.AddRow(
