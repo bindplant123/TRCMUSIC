@@ -39,6 +39,9 @@ func main() {
 	initLogger()
 	defer config.CloseLogging()
 
+	// Bind Render's health-check port before external services initialize.
+	startHTTPServer()
+
 	shutdownPlatforms, err := platforms.Init()
 	if err != nil {
 		gologging.Fatal("Failed to initialize platforms: " + err.Error())
@@ -81,8 +84,6 @@ func main() {
 	}
 
 	modules.Init(core.Bot, core.Assistants)
-
-	startHTTPServer()
 
 	core.Bot.Idle()
 }
