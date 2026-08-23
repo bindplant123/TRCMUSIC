@@ -8,6 +8,7 @@ package modules
 
 import (
 	"context"
+	"time"
 
 	"github.com/Laky-64/gologging"
 	"github.com/amarnathcjd/gogram/telegram"
@@ -53,10 +54,18 @@ func streamEndHandler(
 	cid := r.EffectiveChatID()
 	r.Parse()
 
-	// Notify chat when track finishes
-	_, _ = core.Bot.SendMessage(cid, "🎵 <b>Thanks for using TRCMUSIC!</b>\nStay tuned for more music ❤️", &telegram.SendOptions{
-		ParseMode: "HTML",
-	})
+	// Play the farewell in the voice chat before moving to the next track.
+	if announcementPath, err := createFarewellAnnouncement(); err != nil {
+		gologging.ErrorF("[call.go] Failed to create farewell announcement: %v", err)
+	} else {
+		if err := r.PlayAnnouncement(announcementPath); err != nil {
+			gologging.ErrorF("[call.go] Failed to play farewell announcement: %v", err)
+		}
+		time.AfterFunc(8*time.Second, func() {
+			_ = removeAnnouncement(announcementPath)
+		})
+		time.Sleep(5 * time.Second)
+	}
 
 	var t *state.Track
 	var wasLooping bool

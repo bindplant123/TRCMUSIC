@@ -457,6 +457,15 @@ func (r *RoomState) play() error {
 	return r.Assistant.Ntg.Play(r.chatID, desc)
 }
 
+// PlayAnnouncement plays a temporary audio file without changing track state.
+func (r *RoomState) PlayAnnouncement(path string) error {
+	if r.IsDestroyed() {
+		return ErrRoomDestroyed
+	}
+
+	return r.Assistant.Ntg.Play(r.chatID, getMediaDescription(path, 0, 1, false, false))
+}
+
 func getMediaDescription(
 	url string,
 	pos int,
@@ -505,12 +514,16 @@ func getAudioPipeline(
 	}
 
 	audioCmd := baseCmd
-	audioCmd += "-filter:a \"bass=g=15:f=110:w=0.6,atempo=" + strconv.FormatFloat(
+	filters := "atempo=" + strconv.FormatFloat(
 		speed,
 		'f',
 		2,
 		64,
-	) + "\" "
+	)
+	if bass {
+		filters = "bass=g=15:f=110:w=0.6," + filters
+	}
+	audioCmd += "-filter:a \"" + filters + "\" "
 	audioCmd += "-f s16le -ac " + strconv.Itoa(int(audio.ChannelCount)) + " "
 	audioCmd += "-ar " + strconv.Itoa(int(audio.SampleRate)) + " "
 	audioCmd += "pipe:1"
