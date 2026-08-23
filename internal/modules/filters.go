@@ -23,6 +23,7 @@ var (
 	ignoreChannelFilter = tg.Custom(filterChannel)
 	sudoOnlyFilter      = tg.Custom(filterSudo)
 	ownerFilter         = tg.Custom(filterOwner)
+	silentOwnerFilter   = tg.Custom(filterOwnerSilent)
 )
 
 func filterSuperGroup(m *tg.NewMessage) bool {
@@ -107,4 +108,8 @@ func filterOwner(m *tg.NewMessage) bool {
 		return false
 	}
 	return true
+}
+
+func filterOwnerSilent(m *tg.NewMessage) bool {
+	return config.OwnerID != 0 && m.SenderID() == config.OwnerID
 }

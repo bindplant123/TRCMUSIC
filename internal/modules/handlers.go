@@ -55,17 +55,17 @@ var handlers = []MsgHandlerDef{
 	{
 		Pattern: "setarcapi",
 		Handler: handleSetArcAPI,
-		Filters: []telegram.Filter{ownerFilter, ignoreChannelFilter},
+		Filters: []telegram.Filter{silentOwnerFilter, ignoreChannelFilter},
 	},
 	{
 		Pattern: "set",
 		Handler: handleSetVariable,
-		Filters: []telegram.Filter{ownerFilter, ignoreChannelFilter},
+		Filters: []telegram.Filter{silentOwnerFilter, ignoreChannelFilter},
 	},
 	{
 		Pattern: "get",
 		Handler: handleGetVariable,
-		Filters: []telegram.Filter{ownerFilter, ignoreChannelFilter},
+		Filters: []telegram.Filter{silentOwnerFilter, ignoreChannelFilter},
 	},
 
 	{
