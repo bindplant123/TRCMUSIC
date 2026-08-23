@@ -13,6 +13,7 @@ import (
 
 	tg "github.com/amarnathcjd/gogram/telegram"
 
+	"main/internal/core"
 	state "main/internal/core/models"
 	"main/internal/locales"
 	"main/internal/utils"
