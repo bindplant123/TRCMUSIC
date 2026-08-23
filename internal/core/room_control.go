@@ -453,7 +453,7 @@ func (r *RoomState) Unmute() (bool, error) {
 }
 
 func (r *RoomState) play() error {
-	desc := getMediaDescription(r.filePath, r.position, r.speed, r.track.Video, r.bass)
+	desc := getMediaDescription(r.filePath, r.position, r.speed, r.track.Video, r.bass, 1.0)
 	return r.Assistant.Ntg.Play(r.chatID, desc)
 }
 
@@ -463,7 +463,7 @@ func (r *RoomState) PlayAnnouncement(path string) error {
 		return ErrRoomDestroyed
 	}
 
-	return r.Assistant.Ntg.Play(r.chatID, getMediaDescription(path, 0, 1, false, false))
+	return r.Assistant.Ntg.Play(r.chatID, getMediaDescription(path, 0, 1, false, false, 1.05))
 }
 
 func getMediaDescription(
@@ -472,6 +472,7 @@ func getMediaDescription(
 	speed float64,
 	isVideo bool,
 	bass bool,
+	volume float64,
 ) ntgcalls.MediaDescription {
 	if speed < 0.5 {
 		speed = 0.5
@@ -488,7 +489,7 @@ func getMediaDescription(
 	}
 	baseCmd += "-v warning -i \"" + url + "\" "
 
-	audio := getAudioPipeline(baseCmd, speed, bass)
+	audio := getAudioPipeline(baseCmd, speed, bass, volume)
 	if !isVideo {
 		return ntgcalls.MediaDescription{
 			Microphone: audio,
@@ -506,6 +507,7 @@ func getAudioPipeline(
 	baseCmd string,
 	speed float64,
 	bass bool,
+	volume float64,
 ) *ntgcalls.AudioDescription {
 	audio := &ntgcalls.AudioDescription{
 		MediaSource:  ntgcalls.MediaSourceShell,
@@ -514,7 +516,7 @@ func getAudioPipeline(
 	}
 
 	audioCmd := baseCmd
-	filters := "atempo=" + strconv.FormatFloat(
+	filters := "volume=" + strconv.FormatFloat(volume, 'f', 2, 64) + ",atempo=" + strconv.FormatFloat(
 		speed,
 		'f',
 		2,
