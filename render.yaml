@@ -20,7 +20,13 @@ services:
         sync: false
       # Optional environment variables
       - key: START_IMG_URL
-        value: "https://files.catbox.moe/he87u5.jpg"
+        value: "https://te.legra.ph/file/52792e7acc085c69eeb14.jpg"
+      - key: PING_IMG_URL
+        value: "https://te.legra.ph/file/52792e7acc085c69eeb14.jpg"
+      - key: SUPPORT_CHANNEL
+        value: "https://t.me/OP_SUPPORTS"
+      - key: SUPPORT_CHAT
+        value: "https://t.me/Princes_log_support_group"
       - key: ARC_API_KEY
         sync: false
       - key: DURATION_LIMIT

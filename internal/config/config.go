@@ -108,19 +108,19 @@ func loadConfig() {
 	DurationLimit = int(getInt64("DURATION_LIMIT", 3600)) // In seconds
 	LeaveOnDemoted = getBool("LEAVE_ON_DEMOTED", false)
 	QueueLimit = int(getInt64("QUEUE_LIMIT", 10))
-	SupportChat = getString("SUPPORT_CHAT", "https://t.me/ArcChatz")
-	SupportChannel = getString("SUPPORT_CHANNEL", "https://t.me/ArcUpdates")
+	SupportChat = getString("SUPPORT_CHAT", "https://t.me/Princes_log_support_group")
+	SupportChannel = getString("SUPPORT_CHANNEL", "https://t.me/OP_SUPPORTS")
 	CookiesLink = getString("COOKIES_LINK", "")
 	SetCmds = getBool("SET_CMDS", true)
 	MaxAuthUsers = int(getInt64("MAX_AUTH_USERS", 25))
 
 	StartImage = getString(
 		"START_IMG_URL",
-		"https://files.catbox.moe/ti82r1.jpg",
+		"https://te.legra.ph/file/52792e7acc085c69eeb14.jpg",
 	)
 	PingImage = getString(
 		"PING_IMG_URL",
-		"https://files.catbox.moe/po9y7v.jpg",
+		"https://te.legra.ph/file/52792e7acc085c69eeb14.jpg",
 	)
 	Port = getString("PORT", "8000")
 }
