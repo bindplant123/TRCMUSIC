@@ -47,6 +47,7 @@ var (
 	MaxAuthUsers        int
 	StartImage          string
 	PingImage           string
+	StatsImage          string
 	Port                string
 
 	// System & Logging
@@ -124,6 +125,10 @@ func loadConfig() {
 	)
 	PingImage = getString(
 		"PING_IMG_URL",
+		"https://te.legra.ph/file/52792e7acc085c69eeb14.jpg",
+	)
+	StatsImage = getString(
+		"STATS_IMG_URL",
 		"https://te.legra.ph/file/52792e7acc085c69eeb14.jpg",
 	)
 	Port = getString("PORT", "8000")

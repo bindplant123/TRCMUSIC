@@ -783,6 +783,13 @@ stats_served_chats_err: "• Chats: <code>Error: {error}</code>"
 stats_served_users: "• Users: <code>{count}</code>"
 stats_served_users_err: "• Users: <code>Error: {error}</code>"
 
+stats_menu: "ᴄʟɪᴄᴋ ᴏɴ ᴛʜᴇ ʙᴜᴛᴛᴏɴs ʙᴇʟᴏᴡ ᴛᴏ ᴄʜᴇᴄᴋ ᴛʜᴇ sᴛᴀᴛs ᴏғ {bot}."
+stats_details_header: "<b><u>{bot} sᴛᴀᴛs ᴀɴᴅ ɪɴғᴏʀᴍᴀᴛɪᴏɴ :</u></b>"
+STATS_GENERAL_BTN: "ɢᴇɴᴇʀᴀʟ"
+STATS_OVERALL_BTN: "ᴏᴠᴇʀᴀʟʟ sᴛᴀᴛs"
+STATS_CLOSE_BTN: "𝗖𝗟𝗢𝗦𝗘"
+STATS_BACK_BTN: "𝗕𝗔𝗖𝗞"
+
 
 sudo_owner_self: "😂 Haha, you’re the boss already! Why are you even trying to add yourself?"
 sudo_bot_self: "🤖 Haha, I’m the bot! I can’t add myself to the sudo list — even the owner can’t cheat me 😎"

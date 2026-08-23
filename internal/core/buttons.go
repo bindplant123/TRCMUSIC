@@ -205,6 +205,32 @@ func GetBackKeyboard(chatID int64) *tg.ReplyInlineMarkup {
 		Build()
 }
 
+func GetStatsKeyboard(chatID int64, sudo bool) *tg.ReplyInlineMarkup {
+	keyboard := tg.NewKeyboard()
+	if sudo {
+		keyboard.AddRow(
+			tg.Button.Data(F(chatID, "STATS_GENERAL_BTN"), "stats_general"),
+			tg.Button.Data(F(chatID, "STATS_OVERALL_BTN"), "stats_overall"),
+		)
+	} else {
+		keyboard.AddRow(
+			tg.Button.Data(F(chatID, "STATS_OVERALL_BTN"), "stats_overall"),
+		)
+	}
+	return keyboard.AddRow(
+		tg.Button.Data(F(chatID, "STATS_CLOSE_BTN"), "close"),
+	).Build()
+}
+
+func GetStatsBackKeyboard(chatID int64) *tg.ReplyInlineMarkup {
+	return tg.NewKeyboard().
+		AddRow(
+			tg.Button.Data(F(chatID, "STATS_BACK_BTN"), "stats_back"),
+			tg.Button.Data(F(chatID, "STATS_CLOSE_BTN"), "close"),
+		).
+		Build()
+}
+
 func formatDuration(sec int) string {
 	h := sec / 3600
 	m := (sec % 3600) / 60

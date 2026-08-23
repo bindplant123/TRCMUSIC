@@ -479,6 +479,9 @@ var cbHandlers = []CbHandlerDef{
 	{Pattern: "help_cb", Handler: helpCB},
 	{Pattern: "^lang:[a-z]", Handler: langCallbackHandler},
 	{Pattern: `^help:(.+)`, Handler: helpCallbackHandler},
+	{Pattern: "^stats_overall$", Handler: statsOverallHandler},
+	{Pattern: "^stats_general$", Handler: statsGeneralHandler},
+	{Pattern: "^stats_back$", Handler: statsBackHandler},
 
 	{Pattern: "^close$", Handler: closeHandler},
 	{Pattern: "^cancel$", Handler: cancelHandler},

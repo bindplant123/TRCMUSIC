@@ -18,8 +18,10 @@ import (
 	"github.com/shirou/gopsutil/v3/mem"
 
 	"main/internal/config"
+	"main/internal/core"
 	"main/internal/database"
 	"main/internal/locales"
+	"main/internal/utils"
 )
 
 func init() {
@@ -40,16 +42,67 @@ func init() {
 }
 
 func statsHandler(m *telegram.NewMessage) error {
+	chatID := m.ChannelID()
+	sudo := m.SenderID() == config.OwnerID
+	if isSudo, _ := database.IsSudo(m.SenderID()); isSudo {
+		sudo = true
+	}
+
+	_, err := m.Respond(
+		F(chatID, "stats_menu", locales.Arg{
+			"bot": utils.MentionHTML(m.Client.Me()),
+		}),
+		&telegram.SendOptions{
+			ParseMode:   "HTML",
+			Media:       config.StatsImage,
+			ReplyMarkup: core.GetStatsKeyboard(chatID, sudo),
+		},
+	)
+	if err != nil {
+		return err
+	}
+	return telegram.ErrEndGroup
+}
+
+func statsText(chatID int64, bot string) string {
 	var sb strings.Builder
 	sb.Grow(512)
-	chatID := m.ChannelID()
-
+	sb.WriteString(F(chatID, "stats_details_header", locales.Arg{"bot": bot}) + "\n\n")
 	sb.WriteString(getSystemStats(chatID))
 	sb.WriteString(getGoMemStats(chatID))
 	sb.WriteString(getServerStats(chatID))
 	sb.WriteString(getServedStats(chatID))
+	return sb.String()
+}
 
-	m.Reply(sb.String())
+func statsOverallHandler(cb *telegram.CallbackQuery) error {
+	cb.Answer("")
+	cb.Edit(statsText(cb.ChannelID(), utils.MentionHTML(cb.Client.Me())), &telegram.SendOptions{
+		ParseMode:   "HTML",
+		Media:       config.StatsImage,
+		ReplyMarkup: core.GetStatsBackKeyboard(cb.ChannelID()),
+	})
+	return telegram.ErrEndGroup
+}
+
+func statsGeneralHandler(cb *telegram.CallbackQuery) error {
+	return statsOverallHandler(cb)
+}
+
+func statsBackHandler(cb *telegram.CallbackQuery) error {
+	chatID := cb.ChannelID()
+	sudo := cb.SenderID == config.OwnerID
+	if isSudo, _ := database.IsSudo(cb.SenderID); isSudo {
+		sudo = true
+	}
+	cb.Answer("")
+	cb.Edit(F(chatID, "stats_menu", locales.Arg{
+		"bot": utils.MentionHTML(cb.Client.Me()),
+	}), &telegram.SendOptions{
+		ParseMode:   "HTML",
+		Media:       config.StatsImage,
+		ReplyMarkup: core.GetStatsKeyboard(chatID, sudo),
+	})
 	return telegram.ErrEndGroup
 }
 
