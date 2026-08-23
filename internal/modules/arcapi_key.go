@@ -18,12 +18,40 @@ import (
 )
 
 func init() {
-	helpTexts["/setarcapi"] = `<i>Update the Arc Music API key and restart the bot.</i>
+	helpTexts["/set"] = `<i>Update the Arc Music API key and restart the bot.</i>
 
 <u>Usage:</u>
-<code>/setarcapi YOUR_ARC_API_KEY</code>
+<code>/set ARC_API_KEY YOUR_ARC_API_KEY</code>
+
+<i>Read the current key in private chat:</i>
+<code>/get ARC_API_KEY</code>
 
 <b>🔒 Restrictions:</b> Owner only.`
+}
+
+func handleSetVariable(m *tg.NewMessage) error {
+	parts := strings.Fields(m.Args())
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "ARC_API_KEY") {
+		m.Reply(F(m.ChannelID(), "setarcapi_usage"))
+		return tg.ErrEndGroup
+	}
+
+	return updateArcAPIKey(m, parts[1])
+}
+
+func handleGetVariable(m *tg.NewMessage) error {
+	parts := strings.Fields(m.Args())
+	if len(parts) != 1 || !strings.EqualFold(parts[0], "ARC_API_KEY") {
+		m.Reply(F(m.ChannelID(), "getarcapi_usage"))
+		return tg.ErrEndGroup
+	}
+	if !m.IsPrivate() {
+		m.Reply(F(m.ChannelID(), "getarcapi_private"))
+		return tg.ErrEndGroup
+	}
+
+	m.Reply(F(m.ChannelID(), "getarcapi_value", locales.Arg{"value": config.ArcAPIKey}))
+	return tg.ErrEndGroup
 }
 
 func handleSetArcAPI(m *tg.NewMessage) error {
@@ -32,6 +60,11 @@ func handleSetArcAPI(m *tg.NewMessage) error {
 		m.Reply(F(m.ChannelID(), "setarcapi_usage"))
 		return tg.ErrEndGroup
 	}
+
+	return updateArcAPIKey(m, apiKey)
+}
+
+func updateArcAPIKey(m *tg.NewMessage, apiKey string) error {
 
 	if config.RenderAPIKey != "" || config.RenderServiceID != "" {
 		if config.RenderAPIKey == "" || config.RenderServiceID == "" {
