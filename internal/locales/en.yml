@@ -586,6 +586,10 @@ restart_symlink_fail: "❌ Failed to resolve executable path: {error}"
 restart_service: "{bot} has just restarted. Sorry for the issues.\n\nStart playing again after 10–15 seconds."
 restart_initiated: "✅ Restart initiated successfully!"
 restart_fail: "❌ Failed to restart: {error}"
+setarcapi_usage: "⚠️ Usage: <code>/setarcapi YOUR_ARC_API_KEY</code>"
+setarcapi_render_config: "❌ Render mode requires both <code>RENDER_API_KEY</code> and <code>RENDER_SERVICE_ID</code> to be configured."
+setarcapi_failed: "❌ Failed to update the Arc Music API key: <code>{error}</code>"
+setarcapi_success: "✅ Arc Music API key updated. Restarting the bot now..."
 
 
 room_not_active_cb: "⚠️ Nothing playing right now."

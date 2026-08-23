@@ -29,6 +29,10 @@ services:
         value: "https://t.me/Princes_log_support_group"
       - key: ARC_API_KEY
         sync: false
+      - key: RENDER_API_KEY
+        sync: false
+      - key: RENDER_SERVICE_ID
+        sync: false
       - key: DURATION_LIMIT
         value: "3600"
       - key: QUEUE_LIMIT

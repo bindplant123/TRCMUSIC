@@ -52,6 +52,11 @@ var handlers = []MsgHandlerDef{
 		Handler: handleRestart,
 		Filters: []telegram.Filter{ownerFilter, ignoreChannelFilter},
 	},
+	{
+		Pattern: "setarcapi",
+		Handler: handleSetArcAPI,
+		Filters: []telegram.Filter{ownerFilter, ignoreChannelFilter},
+	},
 
 	{
 		Pattern: "(addsudo|addsudoer|sudoadd)",

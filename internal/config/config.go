@@ -34,6 +34,8 @@ var (
 	SpotifyClientSecret string
 	ArcAPIURL           string
 	ArcAPIKey           string
+	RenderAPIKey        string
+	RenderServiceID     string
 	DefaultLang         string
 	DurationLimit       int
 	LeaveOnDemoted      bool
@@ -103,6 +105,8 @@ func loadConfig() {
 	SpotifyClientSecret = getString("SPOTIFY_CLIENT_SECRET", "")
 	ArcAPIURL = getString("ARC_API_URL", "https://api.arcmusic.fun")
 	ArcAPIKey = getString("ARC_API_KEY", "")
+	RenderAPIKey = getString("RENDER_API_KEY", "")
+	RenderServiceID = getString("RENDER_SERVICE_ID", "")
 
 	DefaultLang = getString("DEFAULT_LANG", "en")
 	DurationLimit = int(getInt64("DURATION_LIMIT", 3600)) // In seconds
