@@ -10,6 +10,7 @@ package platforms
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/url"
 	"path"
 	"regexp"
@@ -185,6 +186,10 @@ func (*DirectStreamPlatform) Search(
 func (d *DirectStreamPlatform) validateStream(
 	urlStr string,
 ) (*streamInfo, error) {
+	if err := validatePublicStreamURL(urlStr); err != nil {
+		return nil, err
+	}
+
 	client := rc.
 		SetTimeout(10*time.Second).
 		SetHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
@@ -247,6 +252,32 @@ func (d *DirectStreamPlatform) validateStream(
 	}
 
 	return info, nil
+}
+
+func validatePublicStreamURL(rawURL string) error {
+	parsedURL, err := url.ParseRequestURI(rawURL)
+	if err != nil || parsedURL.Hostname() == "" {
+		return fmt.Errorf("invalid stream URL")
+	}
+	if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
+		return fmt.Errorf("stream URL must use http or https")
+	}
+	if parsedURL.User != nil {
+		return fmt.Errorf("stream URL user info is not allowed")
+	}
+
+	addresses, err := net.LookupIP(parsedURL.Hostname())
+	if err != nil || len(addresses) == 0 {
+		return fmt.Errorf("stream host could not be resolved")
+	}
+	for _, address := range addresses {
+		if address.IsLoopback() || address.IsPrivate() || address.IsLinkLocalUnicast() ||
+			address.IsLinkLocalMulticast() || address.IsUnspecified() || address.IsMulticast() {
+			return fmt.Errorf("private or local stream hosts are not allowed")
+		}
+	}
+
+	return nil
 }
 
 // generateID creates a unique ID from the URL

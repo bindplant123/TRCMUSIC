@@ -22,7 +22,6 @@ import "C"
 
 import (
 	"net/http"
-	_ "net/http/pprof"
 	"os"
 
 	"github.com/Laky-64/gologging"
