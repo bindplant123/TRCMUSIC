@@ -306,7 +306,7 @@ func handlePlay(m *tg.NewMessage, opts *playOpts) error {
 		return err
 	}
 
-	_ = m.Delete()
+	_, _ = m.Delete()
 
 	return tg.ErrEndGroup
 }
