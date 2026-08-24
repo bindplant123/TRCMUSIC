@@ -178,21 +178,19 @@ func (s *SoundCloudPlatform) Stream(
 	ctx context.Context,
 	track *state.Track,
 ) (string, error) {
+	if err := ctx.Err(); err != nil {
+		return "", err
+	}
 	track.Video = false
-	cmd := exec.CommandContext(ctx, "yt-dlp", "--no-playlist", "--no-warnings", "--no-check-certificate", "-f", "ba[abr>=128]/ba", "-g", track.URL)
-	output, err := cmd.Output()
-	if err != nil {
-		if errors.Is(ctx.Err(), context.Canceled) || errors.Is(ctx.Err(), context.DeadlineExceeded) {
-			return "", ctx.Err()
-		}
-		return "", fmt.Errorf("yt-dlp stream resolution failed: %w", err)
+	args := []string{
+		"yt-dlp", "--no-playlist", "--no-warnings", "--no-check-certificate",
+		"-f", "ba[abr>=128]/ba", "-o", "-", "--", track.URL,
 	}
-	for _, line := range strings.Split(string(output), "\n") {
-		if streamURL := strings.TrimSpace(line); streamURL != "" {
-			return streamURL, nil
-		}
+	quoted := make([]string, len(args))
+	for i, arg := range args {
+		quoted[i] = shellQuote(arg)
 	}
-	return "", errors.New("yt-dlp returned no stream URL")
+	return "shell:" + strings.Join(quoted, " "), nil
 }
 
 func (*SoundCloudPlatform) CanSearch() bool { return false } // can but for now not needed

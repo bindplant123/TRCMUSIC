@@ -481,16 +481,23 @@ func getMediaDescription(
 		speed = 4.0
 	}
 
+	streamPipe := strings.HasPrefix(url, "shell:")
 	baseCmd := "ffmpeg -hide_banner -nostdin -probesize 256k -analyzeduration 500k "
-	if isStreamURL(url) {
+	if streamPipe {
+		baseCmd = strings.TrimPrefix(url, "shell:") + " | " + baseCmd + "-i pipe:0 "
+	} else if isStreamURL(url) {
 		baseCmd += "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 -rw_timeout 15000000 "
+		baseCmd += "-i " + shellQuote(url) + " "
+	} else {
+		baseCmd += "-i " + shellQuote(url) + " "
 	}
-	if pos > 0 {
+	if pos > 0 && !streamPipe {
 		baseCmd += "-ss " + strconv.Itoa(pos) + " "
 	}
-	baseCmd += "-v warning -i " + shellQuote(url) + " "
+	baseCmd += "-v warning "
 
 	audio := getAudioPipeline(baseCmd, speed, bass, volume)
+	audio.KeepOpen = streamPipe
 	if !isVideo {
 		return ntgcalls.MediaDescription{
 			Microphone: audio,

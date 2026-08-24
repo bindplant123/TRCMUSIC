@@ -293,38 +293,36 @@ func (y *YtdlpPlatform) Download(
 	return path, nil
 }
 
-// Stream asks yt-dlp only for the selected media URL. FFmpeg consumes that
-// URL directly, so the complete track is never staged in downloads/.
+// Stream returns a producer pipeline. yt-dlp writes media bytes to stdout and
+// FFmpeg consumes them immediately, so no complete file is staged on disk.
 func (y *YtdlpPlatform) Stream(
 	ctx context.Context,
 	track *state.Track,
 ) (string, error) {
+	if err := ctx.Err(); err != nil {
+		return "", err
+	}
+
 	format := "ba[abr>=128]/ba/b"
 	if track.Video {
 		format = "best[height>=360][height<=1080]/best"
 	}
-	args := []string{"--no-playlist", "--no-warnings", "--no-check-certificate", "-f", format, "-g"}
+	args := []string{"yt-dlp", "--no-playlist", "--no-warnings", "--no-check-certificate", "-f", format, "-o", "-"}
 	if y.isYouTubeURL(track.URL) {
 		if cookieFile, err := cookies.GetRandomCookieFile(); err == nil && cookieFile != "" {
 			args = append(args, "--cookies", cookieFile)
 		}
 	}
-	args = append(args, track.URL)
+	args = append(args, "--", track.URL)
+	quoted := make([]string, len(args))
+	for i, arg := range args {
+		quoted[i] = shellQuote(arg)
+	}
+	return "shell:" + strings.Join(quoted, " "), nil
+}
 
-	cmd := exec.CommandContext(ctx, "yt-dlp", args...)
-	output, err := cmd.Output()
-	if err != nil {
-		if errors.Is(ctx.Err(), context.Canceled) || errors.Is(ctx.Err(), context.DeadlineExceeded) {
-			return "", ctx.Err()
-		}
-		return "", fmt.Errorf("yt-dlp stream resolution failed: %w", err)
-	}
-	for _, line := range strings.Split(string(output), "\n") {
-		if streamURL := strings.TrimSpace(line); streamURL != "" {
-			return streamURL, nil
-		}
-	}
-	return "", errors.New("yt-dlp returned no stream URL")
+func shellQuote(value string) string {
+	return "'" + strings.ReplaceAll(value, "'", "'\\''") + "'"
 }
 
 func (*YtdlpPlatform) CanSearch() bool { return false }
