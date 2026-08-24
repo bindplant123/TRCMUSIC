@@ -248,6 +248,13 @@ func (f *ArcApiPlatform) pollJobStatus(ctx context.Context, jobID string) string
 		if result, ok := job["result"].(map[string]any); ok {
 			if cdn, ok := result["cdn"].(string); ok && cdn != "" {
 				return cdn
+			}
+		}
+
+		break
+	}
+	return ""
+}
 
 func waitForPoll(ctx context.Context, duration time.Duration) bool {
 	timer := time.NewTimer(duration)
@@ -258,13 +265,6 @@ func waitForPoll(ctx context.Context, duration time.Duration) bool {
 	case <-timer.C:
 		return true
 	}
-}
-			}
-		}
-
-		break
-	}
-	return ""
 }
 
 func (f *ArcApiPlatform) extractCandidate(data map[string]any) string {
