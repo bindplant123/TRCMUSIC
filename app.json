@@ -53,7 +53,7 @@
         },
         "DURATION_LIMIT": {
             "description": "The maximum duration of a track in seconds.",
-            "value": "3600",
+            "value": "86400",
             "required": false
         },
         "LEAVE_ON_DEMOTED": {

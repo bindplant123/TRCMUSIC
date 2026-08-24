@@ -34,7 +34,7 @@ services:
       - key: RENDER_SERVICE_ID
         sync: false
       - key: DURATION_LIMIT
-        value: "3600"
+        value: "86400"
       - key: QUEUE_LIMIT
         value: "10"
       - key: LEAVE_ON_DEMOTED

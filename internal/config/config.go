@@ -110,7 +110,7 @@ func loadConfig() {
 	RenderServiceID = getString("RENDER_SERVICE_ID", "")
 
 	DefaultLang = getString("DEFAULT_LANG", "en")
-	DurationLimit = int(getInt64("DURATION_LIMIT", 3600)) // In seconds
+	DurationLimit = int(getInt64("DURATION_LIMIT", 86400)) // In seconds (24 hours)
 	LeaveOnDemoted = getBool("LEAVE_ON_DEMOTED", false)
 	QueueLimit = int(getInt64("QUEUE_LIMIT", 10))
 	SupportChat = getString("SUPPORT_CHAT", "https://t.me/Princes_log_support_group")
