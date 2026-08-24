@@ -174,6 +174,27 @@ func (s *SoundCloudPlatform) Download(
 	return path, nil
 }
 
+func (s *SoundCloudPlatform) Stream(
+	ctx context.Context,
+	track *state.Track,
+) (string, error) {
+	track.Video = false
+	cmd := exec.CommandContext(ctx, "yt-dlp", "--no-playlist", "--no-warnings", "--no-check-certificate", "-f", "ba[abr>=128]/ba", "-g", track.URL)
+	output, err := cmd.Output()
+	if err != nil {
+		if errors.Is(ctx.Err(), context.Canceled) || errors.Is(ctx.Err(), context.DeadlineExceeded) {
+			return "", ctx.Err()
+		}
+		return "", fmt.Errorf("yt-dlp stream resolution failed: %w", err)
+	}
+	for _, line := range strings.Split(string(output), "\n") {
+		if streamURL := strings.TrimSpace(line); streamURL != "" {
+			return streamURL, nil
+		}
+	}
+	return "", errors.New("yt-dlp returned no stream URL")
+}
+
 func (*SoundCloudPlatform) CanSearch() bool { return false } // can but for now not needed
 func (*SoundCloudPlatform) Search(
 	string,

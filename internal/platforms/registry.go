@@ -255,6 +255,53 @@ func Download(
 	return "", errors.New("no downloader available for source: " + string(track.Source))
 }
 
+// Stream resolves a track to a media URL for immediate playback. It is kept
+// separate from Download so callers can fall back to the cached-file path.
+func Stream(ctx context.Context, track *state.Track) (string, error) {
+	var errs []string
+
+	for _, p := range GetOrderedPlatforms() {
+		streamer, ok := p.(state.Streamer)
+		if !ok || !p.CanDownload(track.Source) {
+			continue
+		}
+
+		streamURL, err := streamer.Stream(ctx, track)
+		if err == nil && strings.TrimSpace(streamURL) != "" {
+			gologging.Info("Streaming via " + string(p.Name()))
+			return streamURL, nil
+		}
+		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
+			return "", err
+		}
+		if err != nil {
+			errs = append(errs, string(p.Name())+": "+err.Error())
+		}
+	}
+
+	if len(errs) > 0 {
+		return "", combineErrors("no streaming URL available", errs)
+	}
+	return "", errors.New("no streaming platform available for source: " + string(track.Source))
+}
+
+// ResolvePlaybackInput prefers a network URL and falls back to a local file
+// for platforms such as Telegram that cannot expose a public media URL.
+func ResolvePlaybackInput(
+	ctx context.Context,
+	track *state.Track,
+	statusMsg *telegram.NewMessage,
+) (string, error) {
+	streamURL, streamErr := Stream(ctx, track)
+	if streamErr == nil {
+		return streamURL, nil
+	}
+	if errors.Is(streamErr, context.Canceled) || errors.Is(streamErr, context.DeadlineExceeded) {
+		return "", streamErr
+	}
+	return Download(ctx, track, statusMsg)
+}
+
 // --- Helpers ---
 
 func findMediaInReply(m *telegram.NewMessage) (*telegram.NewMessage, bool, error) {

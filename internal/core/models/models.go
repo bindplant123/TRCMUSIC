@@ -76,4 +76,10 @@ type (
 		// but must set Track.Video = false.
 		GetTracks(query string, video bool) ([]*Track, error)
 	}
+
+	// Streamer is an optional fast path for platforms that can expose a
+	// playable media URL without materializing the whole file on disk.
+	Streamer interface {
+		Stream(ctx context.Context, track *Track) (string, error)
+	}
 )

@@ -293,6 +293,40 @@ func (y *YtdlpPlatform) Download(
 	return path, nil
 }
 
+// Stream asks yt-dlp only for the selected media URL. FFmpeg consumes that
+// URL directly, so the complete track is never staged in downloads/.
+func (y *YtdlpPlatform) Stream(
+	ctx context.Context,
+	track *state.Track,
+) (string, error) {
+	format := "ba[abr>=128]/ba/b"
+	if track.Video {
+		format = "best[height>=360][height<=1080]/best"
+	}
+	args := []string{"--no-playlist", "--no-warnings", "--no-check-certificate", "-f", format, "-g"}
+	if y.isYouTubeURL(track.URL) {
+		if cookieFile, err := cookies.GetRandomCookieFile(); err == nil && cookieFile != "" {
+			args = append(args, "--cookies", cookieFile)
+		}
+	}
+	args = append(args, track.URL)
+
+	cmd := exec.CommandContext(ctx, "yt-dlp", args...)
+	output, err := cmd.Output()
+	if err != nil {
+		if errors.Is(ctx.Err(), context.Canceled) || errors.Is(ctx.Err(), context.DeadlineExceeded) {
+			return "", ctx.Err()
+		}
+		return "", fmt.Errorf("yt-dlp stream resolution failed: %w", err)
+	}
+	for _, line := range strings.Split(string(output), "\n") {
+		if streamURL := strings.TrimSpace(line); streamURL != "" {
+			return streamURL, nil
+		}
+	}
+	return "", errors.New("yt-dlp returned no stream URL")
+}
+
 func (*YtdlpPlatform) CanSearch() bool { return false }
 
 func (*YtdlpPlatform) Search(

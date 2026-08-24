@@ -80,7 +80,7 @@ func handleSkip(m *telegram.NewMessage, cplay bool) error {
 		gologging.ErrorF("[skip.go] err: %v", err)
 	}
 
-	path, err := platforms.Download(context.Background(), t, statusMsg)
+	path, err := platforms.ResolvePlaybackInput(context.Background(), t, statusMsg)
 	if err != nil {
 		txt := F(chatID, "stream_download_fail", locales.Arg{
 			"error": err.Error(),

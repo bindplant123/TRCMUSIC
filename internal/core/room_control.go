@@ -481,9 +481,9 @@ func getMediaDescription(
 		speed = 4.0
 	}
 
-	baseCmd := "ffmpeg "
+	baseCmd := "ffmpeg -hide_banner -nostdin -probesize 256k -analyzeduration 500k "
 	if isStreamURL(url) {
-		baseCmd += "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 "
+		baseCmd += "-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 -rw_timeout 15000000 "
 	}
 	if pos > 0 {
 		baseCmd += "-ss " + strconv.Itoa(pos) + " "

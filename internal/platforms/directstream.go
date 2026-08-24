@@ -137,6 +137,13 @@ func (d *DirectStreamPlatform) Download(
 	return track.URL, nil
 }
 
+func (d *DirectStreamPlatform) Stream(
+	_ context.Context,
+	track *state.Track,
+) (string, error) {
+	return track.URL, nil
+}
+
 func (d *DirectStreamPlatform) CanDownload(
 	source state.PlatformName,
 ) bool {

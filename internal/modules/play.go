@@ -539,7 +539,7 @@ func playTracksAndRespond(
 		title := utils.EscapeHTML(utils.ShortTitle(track.Title, 25))
 		var filePath string
 
-		// Download first track if needed
+		// Resolve the first track quickly and let FFmpeg buffer while it plays.
 		if i == 0 && (!isActive || force) {
 			var opt *tg.SendOptions
 			if track.Duration > 420 {
@@ -580,7 +580,7 @@ func playTracksAndRespond(
 			}
 
 			filePath = path
-			gologging.InfoF("Downloaded track to %s", filePath)
+			gologging.InfoF("Playback input resolved to %s", filePath)
 		}
 
 		if err := playTrackWithRetry(r, track, filePath, force && i == 0, replyMsg); err != nil {
@@ -881,6 +881,6 @@ func safeDownload(
 		}
 	}()
 
-	path, err = platforms.Download(ctx, track, replyMsg)
+	path, err = platforms.ResolvePlaybackInput(ctx, track, replyMsg)
 	return path, err
 }

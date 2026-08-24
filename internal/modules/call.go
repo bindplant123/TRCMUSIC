@@ -95,7 +95,7 @@ func streamEndHandler(
 	if wasLooping && t != nil && r.FilePath() != "" {
 		filePath = r.FilePath()
 	} else {
-		filePath, err = platforms.Download(context.Background(), t, statusMsg)
+		filePath, err = platforms.ResolvePlaybackInput(context.Background(), t, statusMsg)
 	}
 
 	if err != nil {

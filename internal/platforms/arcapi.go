@@ -86,6 +86,20 @@ func (f *ArcApiPlatform) Download(
 	return cdn, nil
 }
 
+func (f *ArcApiPlatform) Stream(
+	ctx context.Context,
+	track *state.Track,
+) (string, error) {
+	cdn, err := f.v2Download(ctx, track)
+	if err != nil {
+		return "", err
+	}
+	if telegramExtractRegex.MatchString(cdn) {
+		return "", errors.New("telegram CDN requires a file download")
+	}
+	return cdn, nil
+}
+
 func (*ArcApiPlatform) CanSearch() bool { return false }
 
 func (*ArcApiPlatform) Search(string, bool) ([]*state.Track, error) {
@@ -185,7 +199,7 @@ func (f *ArcApiPlatform) pollJobStatus(ctx context.Context, jobID string) string
 	apiKey := config.ArcAPIKey
 
 	retries := 15
-	sleepDuration := 3 * time.Second
+	sleepDuration := 750 * time.Millisecond
 
 	reqURL := fmt.Sprintf("%s/youtube/jobStatus", apiURL)
 
@@ -201,31 +215,50 @@ func (f *ArcApiPlatform) pollJobStatus(ctx context.Context, jobID string) string
 			Get(reqURL)
 
 		if err != nil || resp.IsError() {
-			time.Sleep(sleepDuration)
+			if !waitForPoll(ctx, sleepDuration) {
+				return ""
+			}
 			continue
 		}
 
 		status, _ := respData["status"].(string)
 		if status != "success" {
-			time.Sleep(sleepDuration)
+			if !waitForPoll(ctx, sleepDuration) {
+				return ""
+			}
 			continue
 		}
 
 		job, ok := respData["job"].(map[string]any)
 		if !ok {
-			time.Sleep(sleepDuration)
+			if !waitForPoll(ctx, sleepDuration) {
+				return ""
+			}
 			continue
 		}
 
 		jobStatus, _ := job["status"].(string)
 		if jobStatus != "done" {
-			time.Sleep(sleepDuration)
+			if !waitForPoll(ctx, sleepDuration) {
+				return ""
+			}
 			continue
 		}
 
 		if result, ok := job["result"].(map[string]any); ok {
 			if cdn, ok := result["cdn"].(string); ok && cdn != "" {
 				return cdn
+
+func waitForPoll(ctx context.Context, duration time.Duration) bool {
+	timer := time.NewTimer(duration)
+	defer timer.Stop()
+	select {
+	case <-ctx.Done():
+		return false
+	case <-timer.C:
+		return true
+	}
+}
 			}
 		}
 
