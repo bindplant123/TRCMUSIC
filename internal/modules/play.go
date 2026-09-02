@@ -265,6 +265,11 @@ func cplayHandler(m *tg.NewMessage) error {
 
 func handlePlay(m *tg.NewMessage, opts *playOpts) error {
 		chatID := m.ChannelID()
+		if autoplayEnabled, err := database.AutoplayEnabled(chatID); err == nil && autoplayEnabled {
+			if room, ok := core.GetRoom(chatID, nil, false); ok {
+				room.RemoveFromQueue(-1)
+			}
+		}
 	    adminsOnly, _ := database.PlayModeAdminsOnly(chatID)
 	    if adminsOnly {
 		    isAdmin, err := utils.IsChatAdmin(m.Client, chatID, m.SenderID())

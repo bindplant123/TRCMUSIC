@@ -40,6 +40,9 @@ func autoplayHandler(m *tg.NewMessage) error {
 			m.Reply("Unable to update autoplay: " + utils.EscapeHTML(err.Error()))
 			return tg.ErrEndGroup
 		}
+		if room, ok := core.GetRoom(chatID, nil, false); ok {
+			room.RemoveFromQueue(-1)
+		}
 		m.Reply("<b>Autoplay disabled.</b>", &tg.SendOptions{ParseMode: "HTML"})
 		return tg.ErrEndGroup
 	}
