@@ -305,10 +305,10 @@ func handleGetSudoers(m *telegram.NewMessage) error {
 		sb.WriteString("<i>No additional sudoers found.</i>\n")
 	}
 
-	keyboard := tg.NewKeyboard().AddRow(
-		tg.Button.Data("❎ CLOSE", "close"),
+	keyboard := telegram.NewKeyboard().AddRow(
+		telegram.Button.Data("❎ CLOSE", "close"),
 	).Build()
 
-	utils.EOR(statusMsg, sb.String(), &tg.SendOptions{ParseMode: "HTML", ReplyMarkup: keyboard, NoForwards: true})
+	utils.EOR(statusMsg, sb.String(), &telegram.SendOptions{ParseMode: "HTML", ReplyMarkup: keyboard, NoForwards: true})
 	return telegram.ErrEndGroup
 }
