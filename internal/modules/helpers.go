@@ -274,6 +274,12 @@ func SafeMessageHandler(
 			gologging.InfoF("Handler completed successfully for command %s", cmd)
 		}
 
+		if enabled, delErr := database.CommandDelete(m.ChannelID()); delErr == nil && enabled && m.ChatType() != tg.EntityUser {
+			if _, deleteErr := m.Delete(); deleteErr != nil {
+				gologging.DebugF("Failed to auto-delete command in chat %d: %v", m.ChannelID(), deleteErr)
+			}
+		}
+
 		return err
 	}
 }
