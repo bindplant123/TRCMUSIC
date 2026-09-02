@@ -238,7 +238,6 @@ func handleGetSudoers(m *telegram.NewMessage) error {
 	}
 	utils.SetFlood(floodKey, 30*time.Second)
 
-	// "⏳ Fetching sudoers list..."
 	statusMsg, _ := m.Reply(F(chatID, "sudo_list_fetching"))
 
 	list, err := database.Sudoers()
@@ -251,62 +250,65 @@ func handleGetSudoers(m *telegram.NewMessage) error {
 
 	var sb strings.Builder
 
-	// Header
-	sb.WriteString(F(chatID, "sudo_list_header"))
-	sb.WriteString("\n\n")
+	sb.WriteString("<b>Deleted message</b>\n\n")
+	sb.WriteString("<b>OWNER :</b>\n")
 
-	// First, show owner
 	ownerID := config.OwnerID
 	ownerIDStr := strconv.FormatInt(ownerID, 10)
 
 	ownerStr := "<code>" + ownerIDStr + "</code>"
 	if user, err := m.Client.GetUser(ownerID); err == nil {
 		if user.Username != "" {
-			ownerStr = "@" + user.Username + " (ID: <code>" + ownerIDStr + "</code>)"
+			ownerStr = "@" + user.Username + " <code>" + ownerIDStr + "</code>"
 		} else {
-			ownerStr = utils.MentionHTML(user) + " (ID: <code>" + ownerIDStr + "</code>)"
+			ownerStr = utils.MentionHTML(user) + " <code>" + ownerIDStr + "</code>"
 		}
 	}
 
-	sb.WriteString(F(chatID, "sudo_list_owner", locales.Arg{
-		"index": 1,
-		"user":  ownerStr,
-	}))
-	sb.WriteString("\n")
+	sb.WriteString("1▶ ")
+	sb.WriteString(ownerStr)
+	sb.WriteString("\n\n")
 
-	// Then list other sudoers
-	idx := 2
+	userCount := 0
 	for _, id := range list {
 		if id == ownerID {
-			continue // skip owner since already listed
+			continue
 		}
+		userCount++
+	}
 
-		idStr := strconv.FormatInt(id, 10)
-		userStr := "<code>" + idStr + "</code>" // fallback
-
-		if user, err := m.Client.GetUser(id); err == nil {
-			if user.Username != "" {
-				userStr = "@" + user.Username + " (ID: <code>" + idStr + "</code>)"
-			} else {
-				userStr = utils.MentionHTML(user) + " (ID: <code>" + idStr + "</code>)"
+	if userCount > 0 {
+		sb.WriteString("<b>SUDO USERS :</b>\n")
+		idx := 2
+		for _, id := range list {
+			if id == ownerID {
+				continue
 			}
+
+			idStr := strconv.FormatInt(id, 10)
+			userStr := "<code>" + idStr + "</code>"
+
+			if user, err := m.Client.GetUser(id); err == nil {
+				if user.Username != "" {
+					userStr = "@" + user.Username + " <code>" + idStr + "</code>"
+				} else {
+					userStr = utils.MentionHTML(user) + " <code>" + idStr + "</code>"
+				}
+			}
+
+			sb.WriteString(fmt.Sprintf("%d▶ %s\n", idx, userStr))
+			idx++
+			time.Sleep(1 * time.Second)
 		}
-
-		sb.WriteString(F(chatID, "sudo_list_entry", locales.Arg{
-			"index": idx,
-			"user":  userStr,
-		}))
-		sb.WriteString("\n")
-		idx++
-		time.Sleep(1 * time.Second)
+	} else {
+		sb.WriteString("<b>SUDO USERS :</b>\n")
+		sb.WriteString("<i>No additional sudoers found.</i>\n")
 	}
 
-	if idx == 2 {
-		// no extra sudoers beyond owner
-		sb.WriteString(F(chatID, "sudo_list_no_extra"))
-		sb.WriteString("\n")
-	}
+	keyboard := tg.NewKeyboard().AddRow(
+		tg.Button.Data("❎ CLOSE", "close"),
+	).Build()
 
-	utils.EOR(statusMsg, sb.String())
+	utils.EOR(statusMsg, sb.String(), &tg.SendOptions{ParseMode: "HTML", ReplyMarkup: keyboard, NoForwards: true})
 	return telegram.ErrEndGroup
 }
