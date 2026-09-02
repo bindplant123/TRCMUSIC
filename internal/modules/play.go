@@ -586,6 +586,9 @@ func playTracksAndRespond(
 		if err := playTrackWithRetry(r, track, filePath, force && i == 0, replyMsg); err != nil {
 			return err
 		}
+		if err := database.RecordPlayedTrack(chatID, track); err != nil {
+			gologging.ErrorF("Failed to save played track for chat %d: %v", chatID, err)
+		}
 		sendPlayLogs(m, track, (isActive && !force) || i > 0)
 	}
 

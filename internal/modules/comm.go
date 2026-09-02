@@ -47,6 +47,7 @@ var AllCommands = BotCommands{
 	// Commands for group chats
 	GroupUserCommands: []*telegram.BotCommand{
 		{Command: "play", Description: "Play a song."},
+		{Command: "autoplay", Description: "Toggle automatic playback."},
 		{Command: "queue", Description: "Show the queue."},
 		{
 			Command:     "position",

@@ -70,6 +70,14 @@ func streamEndHandler(
 	var t *state.Track
 	var wasLooping bool
 	if len(r.Queue()) == 0 && r.Loop() == 0 {
+		autoplayEnabled, autoplayErr := database.AutoplayEnabled(chatID)
+		if autoplayErr == nil && autoplayEnabled {
+			if autoplayTracks, tracksErr := autoplayTracks(chatID); tracksErr == nil && len(autoplayTracks) > 0 {
+				r.AddTracksToQueue(autoplayTracks)
+			}
+		}
+	}
+	if len(r.Queue()) == 0 && r.Loop() == 0 {
 		core.DeleteRoom(chatID)
 		core.Bot.SendMessage(cid, F(cid, "stream_queue_finished"))
 		return
@@ -122,6 +130,9 @@ func streamEndHandler(
 		core.DeleteRoom(chatID)
 
 		return
+	}
+	if err := database.RecordPlayedTrack(chatID, t); err != nil {
+		gologging.ErrorF("Failed to save autoplay track for chat %d: %v", chatID, err)
 	}
 
 	title := utils.ShortTitle(t.Title, 25)

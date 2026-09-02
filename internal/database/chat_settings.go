@@ -13,6 +13,8 @@ import (
 
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+
+	state "main/internal/core/models"
 )
 
 type RTMPConfig struct {
@@ -30,6 +32,8 @@ type ChatSettings struct {
 	ThumbnailsDisabled bool       `bson:"no_thumb"`
 	PlayModeAdminsOnly bool       `bson:"play_mode"`
 	CommandDelete      bool       `bson:"cmd_delete"`
+	Autoplay           bool       `bson:"autoplay"`
+	PlayedTracks       []state.Track `bson:"played_tracks,omitempty"`
 }
 
 func defaultChatSettings(chatID int64) *ChatSettings {
@@ -37,6 +41,60 @@ func defaultChatSettings(chatID int64) *ChatSettings {
 		ChatID:    chatID,
 		AuthUsers: []int64{},
 	}
+}
+
+func AutoplayEnabled(chatID int64) (bool, error) {
+	settings, err := getChatSettings(chatID)
+	if err != nil {
+		return false, err
+	}
+	return settings.Autoplay, nil
+}
+
+func SetAutoplay(chatID int64, enabled bool) error {
+	return modifyChatSettings(chatID, func(settings *ChatSettings) bool {
+		if settings.Autoplay == enabled {
+			return false
+		}
+		settings.Autoplay = enabled
+		return true
+	})
+}
+
+func RecordPlayedTrack(chatID int64, track *state.Track) error {
+	if track == nil || track.URL == "" {
+		return nil
+	}
+
+	return modifyChatSettings(chatID, func(settings *ChatSettings) bool {
+		tracks := make([]state.Track, 0, len(settings.PlayedTracks)+1)
+		tracks = append(tracks, *track)
+		for _, previous := range settings.PlayedTracks {
+			if previous.URL == track.URL || (track.ID != "" && previous.ID == track.ID) {
+				continue
+			}
+			tracks = append(tracks, previous)
+			if len(tracks) == 50 {
+				break
+			}
+		}
+		settings.PlayedTracks = tracks
+		return true
+	})
+}
+
+func PlayedTracks(chatID int64) ([]*state.Track, error) {
+	settings, err := getChatSettings(chatID)
+	if err != nil {
+		return nil, err
+	}
+
+	tracks := make([]*state.Track, 0, len(settings.PlayedTracks))
+	for i := range settings.PlayedTracks {
+		track := settings.PlayedTracks[i]
+		tracks = append(tracks, &track)
+	}
+	return tracks, nil
 }
 
 func getChatSettings(chatID int64) (*ChatSettings, error) {

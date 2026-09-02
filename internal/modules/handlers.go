@@ -5,6 +5,11 @@
  */
 
 package modules
+	{
+		Pattern: "autoplay",
+		Handler: autoplayHandler,
+		Filters: []telegram.Filter{superGroupFilter},
+	},
 
 import (
 	"fmt"

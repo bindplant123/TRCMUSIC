@@ -115,6 +115,17 @@ func GetTracks(m *telegram.NewMessage, video bool) ([]*state.Track, error) {
 	return nil, errors.New("no tracks found")
 }
 
+func GetYouTubeTracks(query string, limit int) ([]*state.Track, error) {
+	tracks, err := yt.VideoSearch(query, false)
+	if err != nil {
+		return nil, err
+	}
+	if len(tracks) > limit {
+		tracks = tracks[:limit]
+	}
+	return tracks, nil
+}
+
 func processURLs(urls []string, video bool) ([]*state.Track, []string) {
 	var allTracks []*state.Track
 	var errs []string
