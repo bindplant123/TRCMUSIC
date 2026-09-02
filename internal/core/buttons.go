@@ -169,7 +169,7 @@ func GetStartMarkup(chatID int64) tg.ReplyMarkup {
 		AddRow(
 			tg.Button.URL(
 				F(chatID, "SOURCE_BTN"),
-				config.SupportChat,
+				"https://github.com/bindplant123/TRCMUSIC",
 			),
 		).
 		Build()

@@ -5,11 +5,6 @@
  */
 
 package modules
-	{
-		Pattern: "autoplay",
-		Handler: autoplayHandler,
-		Filters: []telegram.Filter{superGroupFilter},
-	},
 
 import (
 	"fmt"
@@ -186,6 +181,11 @@ var handlers = []MsgHandlerDef{
 	{
 		Pattern: "play",
 		Handler: playHandler,
+		Filters: []telegram.Filter{superGroupFilter},
+	},
+	{
+		Pattern: "autoplay",
+		Handler: autoplayHandler,
 		Filters: []telegram.Filter{superGroupFilter},
 	},
 	{
